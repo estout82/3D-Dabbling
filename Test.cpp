@@ -2,9 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
 #include <iostream>
-#include "VertexBuffer.h"
-#include "ShaderProgram.h"
-#include "Texture.h"
+#include "VertexBuffer.hpp"
+#include "ShaderProgram.hpp"
+#include "Texture.hpp"
+#include "Math.hpp"
 
 #ifdef _DEBUG
 
@@ -16,7 +17,7 @@
 
 #endif
 
-#ifdef _RELEASE
+#ifdef NDEBUG
 
 #pragma comment(lib, "sfml-window.lib")
 #pragma comment(lib, "sfml-graphics.lib")
@@ -31,6 +32,10 @@ sf::Window window;
 ShaderProgram* program;
 Texture* texture;
 VertexBuffer* buffer;
+
+Matrix4f worldMatrix;
+
+unsigned int worldMatrixPos;
 
 void init()
 {
@@ -53,11 +58,19 @@ void init()
 	program->create(Shader("vertex.s", GL_VERTEX_SHADER), 
 		Shader("fragment.s", GL_FRAGMENT_SHADER));
 	program->use();
+
+	worldMatrixPos = program->getUniformLocation("worldMatrix");
+	worldMatrix = Matrix4f(Vector4f(1.0f, 0.0f, 0.0f, 0.0f),
+		Vector4f(0.0f, 1.0f, 0.0f, 0.0f),
+		Vector4f(0.0f, 0.0f, 1.0f, 0.0f),
+		Vector4f(0.0f, 0.0f, 0.0f, 1.0f));
 }
 
 void render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	program->setUniformMatrix4f(70, worldMatrix);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);

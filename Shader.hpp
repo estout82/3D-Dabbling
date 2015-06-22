@@ -1,5 +1,5 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef SHADER_HPP
+#define SHADER_HPP
 
 #include <string>
 
@@ -7,14 +7,17 @@ class Shader
 {
 public:
 	Shader();
-	Shader(const std::string& path, unsigned int type);
+	Shader(const std::string& path, 
+		unsigned int type);
 
 	Shader(const Shader& s);
 
 	~Shader();
 
-	bool create(const std::string& code, unsigned int type);
-	bool createFromFile(const std::string& path, unsigned int type);
+	bool create(const std::string& code, 
+		unsigned int type);
+	bool createFromFile(const std::string& path,
+		unsigned int type);
 
 	const Shader& operator=(const Shader& r);
 
@@ -32,4 +35,4 @@ private:
 	unsigned* m_refCount;
 };
 
-#endif
+#endif // SHADER_HPP

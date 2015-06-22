@@ -1,8 +1,8 @@
-#ifndef SHADER_PROGRAM_H
-#define SHADER_PROGRAM_H
+#ifndef SHADER_PROGRAM_HPP
+#define SHADER_PROGRAM_HPP
 
-#include "Shader.h"
-#include "Math.h"
+#include "Shader.hpp"
+#include "Math.hpp"
 
 class ShaderProgram
 {
@@ -52,4 +52,4 @@ private:
 	Shader m_geometry;
 };
 
-#endif
+#endif // SHADER_PROGRAM_HPP

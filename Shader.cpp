@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cassert>
 #include <GL/glew.h>
-#include "Shader.h"
+#include "Shader.hpp"
 
 Shader::Shader() :
 m_handle(NULL),
@@ -12,7 +12,8 @@ m_refCount(new unsigned)
 	*m_refCount = 1;
 }
 
-Shader::Shader(const std::string& path, unsigned int type) :
+Shader::Shader(const std::string& path, 
+	unsigned int type) :
 m_handle(NULL),
 m_refCount(new unsigned)
 {
@@ -34,7 +35,8 @@ Shader::~Shader()
 	dispose();
 }
 
-bool Shader::createFromFile(const std::string& path, unsigned int type)
+bool Shader::createFromFile(const std::string& path, 
+	unsigned int type)
 {
 	return create(readFile(path).c_str(), type);
 }
@@ -52,7 +54,8 @@ const Shader& Shader::operator=(const Shader& s)
 	return *this;
 }
 
-bool Shader::create(const std::string& code, unsigned int type)
+bool Shader::create(const std::string& code, 
+	unsigned int type)
 {
 	m_handle = glCreateShader(type);
 

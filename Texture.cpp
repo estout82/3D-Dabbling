@@ -3,7 +3,7 @@
 #include <cassert>
 #include <GL/glew.h>
 #include <stb_image.h>
-#include "Texture.h"
+#include "Texture.hpp"
 
 Texture::Texture() :
 m_handle(NULL),
