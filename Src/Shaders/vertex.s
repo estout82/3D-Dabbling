@@ -5,7 +5,7 @@ layout (location = 1) in vec2 texCoord;
 
 out vec2 texCoord0;
 
-layout (location = 70) uniform mat4 worldMatrix;
+uniform mat4 worldMatrix;
 
 void main()
 {

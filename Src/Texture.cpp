@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <cassert>
-#include <GL/glew.h>
-#include <stb_image.h>
+#include "3rdParty/stb_image.h"
+#include "OpenGL.hpp"
 #include "Texture.hpp"
 
 Texture::Texture() :
@@ -36,8 +36,8 @@ Texture::~Texture()
 
 bool Texture::loadFromFile(const std::string& path)
 {
-	 int width, height, channels;
-	 unsigned char* pixels;
+    int width, height, channels;
+    unsigned char* pixels;
 
 	pixels = stbi_load(path.c_str(), &width, &height, &channels, 4);
 

@@ -1,5 +1,5 @@
-#include <GL/glew.h>
 #include <iostream>
+#include "OpenGL.hpp"
 #include "ShaderProgram.hpp"
 
 ShaderProgram::ShaderProgram() :
@@ -76,22 +76,21 @@ bool ShaderProgram::create(const Shader& vertexShader,
 	glLinkProgram(m_handle);
 
 	int status;
-	glGetShaderiv(m_handle, GL_LINK_STATUS, &status);
+	glGetProgramiv(m_handle, GL_LINK_STATUS, &status);
 
 	if (status == GL_FALSE)
 	{
-		std::cout << "Error: unable to link a shader program: " << getInfoLog() << "." << std::endl;
+		std::cout << "Error: unable to link a shader program: " << getInfoLog();
 		dispose();
 		return false;
 	}
 
 	glValidateProgram(m_handle);
-
 	glGetProgramiv(m_handle, GL_VALIDATE_STATUS, &status);
 
 	if (status == GL_FALSE)
 	{
-		std::cout << "Error: unable to validate a shader program: " << getInfoLog() << "." << std::endl;
+		std::cout << "Error: unable to validate a shader program: " << getInfoLog();
 		dispose();
 		return false;
 	}
@@ -117,10 +116,10 @@ void ShaderProgram::dispose()
 	}
 }
 
-void ShaderProgram::setUniformMatrix4f(unsigned int location, 
+void ShaderProgram::setUniformMatrix4f(int location,
 	const Matrix4f& m)
 {
-	if (!location)
+	if (location == -1)
 	{
 		std::cout << "Error: unable to set a uniform Matrix4f because the location is NULL." << std::endl;
 		return;
@@ -129,10 +128,10 @@ void ShaderProgram::setUniformMatrix4f(unsigned int location,
 	glUniformMatrix4fv(location, 1, GL_TRUE, &m.row[0][0]);
 }
 
-void ShaderProgram::setUniformVector4f(unsigned int location,
+void ShaderProgram::setUniformVector4f(int location,
 	const Vector4f& v)
 {
-	if (!location)
+	if (location == -1)
 	{
 		std::cout << "Error: unable to set a uniform Vector4f because the location is NULL." << std::endl;
 		return;
@@ -141,10 +140,10 @@ void ShaderProgram::setUniformVector4f(unsigned int location,
 	glUniform4f(location, v.x, v.y, v.z, v.w);
 }
 
-void ShaderProgram::setUniformVector3f(unsigned int location, 
+void ShaderProgram::setUniformVector3f(int location,
 	const Vector3f& v)
 {
-	if (!location)
+	if (location == -1)
 	{
 		std::cout << "Error: unable to set a uniform Vector3f because the location is NULL." << std::endl;
 		return;
@@ -153,10 +152,10 @@ void ShaderProgram::setUniformVector3f(unsigned int location,
 	glUniform3f(location, v.x, v.y, v.z);
 }
 
-void ShaderProgram::setUniformVector2f(unsigned int location, 
+void ShaderProgram::setUniformVector2f(int location,
 	const Vector2f& v)
 {
-	if (!location)
+	if (location == -1)
 	{
 		std::cout << "Error: unable to set a uniform Vector2f because the location is NULL." << std::endl;
 		return;
@@ -165,10 +164,10 @@ void ShaderProgram::setUniformVector2f(unsigned int location,
 	glUniform2f(location, v.x, v.y);
 }
 
-void ShaderProgram::setUniformFloat(unsigned int location, 
+void ShaderProgram::setUniformFloat(int location,
 	float f)
 {
-	if (!location)
+	if (location == -1)
 	{
 		std::cout << "Error: unable to set a uniform float because the location is NULL." << std::endl;
 		return;
@@ -177,10 +176,10 @@ void ShaderProgram::setUniformFloat(unsigned int location,
 	glUniform1f(location, f);
 }
 
-void ShaderProgram::setUniformInt(unsigned int location, 
+void ShaderProgram::setUniformInt(int location,
 	int i)
 {
-	if (!location)
+	if (location ==  -1)
 	{
 		std::cout << "Error: unable to set a uniform int because the location is NULL." << std::endl;
 		return;
@@ -196,10 +195,10 @@ unsigned int ShaderProgram::getUniformLocation(const std::string& name) const
 	if (location == -1)
 	{
 		std::cout << "Error: unable to get the location of the uniform '" << name << "'." << std::endl;
-		return NULL;
+		return 0;
 	}
 
-	return location;
+	return static_cast<unsigned int>(location);
 }
 
 std::string ShaderProgram::getInfoLog() const

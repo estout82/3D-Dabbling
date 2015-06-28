@@ -2,7 +2,7 @@
 #include <sstream>
 #include <iostream>
 #include <cassert>
-#include <GL/glew.h>
+#include "OpenGL.hpp"
 #include "Shader.hpp"
 
 Shader::Shader() :

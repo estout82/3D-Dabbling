@@ -22,17 +22,17 @@ public:
 
 	void dispose();
 
-	void setUniformMatrix4f(unsigned int location, 
+	void setUniformMatrix4f(int location,
 		const Matrix4f& m);
-	void setUniformVector4f(unsigned int location, 
+	void setUniformVector4f(int location,
 		const Vector4f& v);
-	void setUniformVector3f(unsigned int location, 
+	void setUniformVector3f(int location,
 		const Vector3f& v);
-	void setUniformVector2f(unsigned int location, 
+	void setUniformVector2f(int location,
 		const Vector2f& v);
-	void setUniformFloat(unsigned int location, 
+	void setUniformFloat(int location,
 		float f);
-	void setUniformInt(unsigned int location,
+	void setUniformInt(int location,
 		int i);
 
 	unsigned int getUniformLocation(const std::string& name) const;
