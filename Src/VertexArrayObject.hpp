@@ -23,9 +23,7 @@ public:
 
     ~VertexArrayObject();
     
-    void create(const std::vector<Vertex>& vertecies,
-                const std::vector<unsigned int>& indicies,
-                const Shader& vertexShader,
+    bool create(const Shader& vertexShader,
                 const Shader& fragmentShader,
                 const Shader& geometryShader = Shader());
     
@@ -45,8 +43,6 @@ private:
     ShaderProgram m_program;
     
     unsigned int m_handle;
-    unsigned int m_vboHandle;
-    unsigned int m_iboHandle;
     
     unsigned* m_refCount;
     

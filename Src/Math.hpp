@@ -300,10 +300,12 @@ struct Vertex
 {
 	Vector3f pos;
 	Vector2f texCoord;
-	//Vector3f norm;
+	Vector3f norm;
 
-	Vertex() : pos(), texCoord() {}
-	Vertex(Vector3f _pos, Vector2f _texCoord) : pos(_pos), texCoord(_texCoord) {}
+	Vertex() : pos(), texCoord(), norm() {}
+    Vertex(Vector3f _pos) : pos(_pos), texCoord(), norm() {}
+    Vertex(Vector3f _pos, Vector2f _texCoord) : pos(_pos), texCoord(_texCoord), norm() {}
+	Vertex(Vector3f _pos, Vector2f _texCoord, Vector3f _norm) : pos(_pos), texCoord(_texCoord), norm(_norm) {}
 };
 
 #endif // MATH_HPP

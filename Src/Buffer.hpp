@@ -49,16 +49,22 @@ public:
         releaseRef();
     }
     
-    void create(const std::vector<type>& data)
+    bool create(const std::vector<type>& data)
     {
         dispose();
         
         m_numElements = (unsigned int)data.size();
         
         glGenBuffers(1, &m_handle);
+        
+        if (!m_handle)
+            return false;
+        
         glBindBuffer(target, m_handle);
         glBufferData(target, sizeof(type) * m_numElements, &data[0], GL_STATIC_DRAW);
         glBindBuffer(target, NULL);
+        
+        return true;
     }
     
     const Buffer<target, type>& operator=(const Buffer<target, type>& b)
@@ -80,6 +86,11 @@ public:
     void unbind() const
     {
         glBindBuffer(target, NULL);
+    }
+    
+    unsigned int getNumElements() const
+    {
+        return m_numElements;
     }
     
 private:
@@ -119,6 +130,6 @@ private:
 };
 
 typedef Buffer<GL_ARRAY_BUFFER, Vertex> VertexBuffer;
-typedef Buffer<GL_ELEMENT_ARRAY_BUFFER, unsigned int> IndexBuffer;
+typedef Buffer<GL_ELEMENT_ARRAY_BUFFER, unsigned int> ElementBuffer;
 
 #endif // BUFFER_HPP

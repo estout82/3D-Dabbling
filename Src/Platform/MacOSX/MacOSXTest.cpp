@@ -20,14 +20,12 @@ MacOSXTest::MacOSXTest() :
 m_window(NULL)
 {
     std::cout << "Running on MacOSX." << std::endl;
-    
-    angle = 0.0f;
 }
 
 MacOSXTest::~MacOSXTest()
 {
-    delete m_texture;
-    delete m_vao;
+    delete m_mesh;
+    delete m_globalVao;
     delete m_window;
 }
 
@@ -38,24 +36,30 @@ bool MacOSXTest::initalize()
     cs.minorVersion = 3;
     m_window = new sf::Window(sf::VideoMode(800, 600), "Title", sf::Style::Default, cs);
     
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.5f, 0.8f, 0.97f, 0.0f);
     glEnable(GL_DEPTH_TEST);
     
     std::vector<Vertex> vertecies;
-    vertecies.push_back(Vertex(Vector3f(0.0f, 1.0f, -5.0f), Vector2f(0.5f, 1.0f)));
-    vertecies.push_back(Vertex(Vector3f(-1.0f, -1.0f, -5.0f), Vector2f(0.0f, 0.0f)));
-    vertecies.push_back(Vertex(Vector3f(1.0f, -1.0f, -5.0f), Vector2f(1.0f, 0.0f)));
+    vertecies.push_back(Vertex(Vector3f(0.0f, 1.0f, -10.0f), Vector2f(0.5f, 1.0f)));
+    vertecies.push_back(Vertex(Vector3f(-1.0f, -1.0f, -10.0f), Vector2f(0.0f, 0.0f)));
+    vertecies.push_back(Vertex(Vector3f(1.0f, -1.0f, -10.0f), Vector2f(1.0f, 0.0f)));
     
     std::vector<unsigned int> indicies;
     indicies.push_back(0);
+    indicies.push_back(1);
+    indicies.push_back(2);
+    
     
     Shader v(resourcePath("Shaders/vertex.s"), GL_VERTEX_SHADER);
     Shader f(resourcePath("Shaders/fragment.s"), GL_FRAGMENT_SHADER);
     
-    m_vao = new VertexArrayObject();
-    m_vao->create(vertecies, indicies, v, f);
+    m_globalVao = new VertexArrayObject();
+    m_globalVao->create(v, f);
     
-    m_texture = new Texture(resourcePath("image.png"));
+    m_mesh = new Mesh();
+    m_mesh->createFromFile("duck.dae");
+    
+    a = 0.0f;
     
     return true;
 }
@@ -90,23 +94,25 @@ void MacOSXTest::render()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    ShaderProgram sp = m_vao->getShaderProgram();
+    m_globalVao->bind();
     
-    unsigned int matrixLocation = sp.getUniformLocation("worldMatrix");
+    a += 0.5f;
     
-    angle += 1.0f;
+    ShaderProgram sp = m_globalVao->getShaderProgram();
     
-    Matrix4f p;
-    p.initPerspective(800.0f / 600.0f, 90.0f, 0.1f, 100.0f);
+    unsigned int worldMatrixLocation = sp.getUniformLocation("worldMatrix");
     
-    Matrix4f r;
-    r.initRotationXYZ(angle * 0.3f, Vector3f(0.0f, 0.0f, 1.0f));
+    Matrix4f perspective;
+    perspective.initPerspective(800.0f / 600.0f, 90.0f, 0.1f, 1000.0f);
     
-    sp.setUniformMatrix4f(matrixLocation, (p * r));
+    Matrix4f translation;
+    translation.initTranslation(Vector3f(0.0f, 0.0f, -a));
     
-    m_vao->bind();
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    glBindVertexArray(0);
+    sp.setUniformMatrix4f(worldMatrixLocation, perspective * translation);
+    
+    m_mesh->render();
+    
+    m_globalVao->unbind();
 }
 
 #endif // SHADY_PLATFORM_MAC_OSX

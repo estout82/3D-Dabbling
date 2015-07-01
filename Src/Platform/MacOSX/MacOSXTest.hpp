@@ -14,6 +14,8 @@
 #include "ShaderProgram.hpp"
 #include "VertexArrayObject.hpp"
 #include "Texture.hpp"
+#include "Buffer.hpp"
+#include "Mesh.hpp"
 
 class MacOSXTest : public Test
 {
@@ -28,10 +30,13 @@ public:
 private:
     sf::Window* m_window;
     
-    Texture* m_texture;
-    VertexArrayObject* m_vao;
+    Mesh* m_mesh;
+    VertexArrayObject* m_globalVao;
     
-    float angle;
+    float a;
+    
+    unsigned int b;
+    unsigned int l;
     
     void update();
     void render();

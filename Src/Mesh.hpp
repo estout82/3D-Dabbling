@@ -9,39 +9,25 @@
 #ifndef MESH_HPP
 #define MESH_HPP
 
-#include <string>
 #include <vector>
-#include "Math.hpp"
-#include "Texture.hpp"
-#include "VertexArrayObject.hpp"
+#include "MeshNode.hpp"
 
 class Mesh
 {
 public:
     Mesh();
-    Mesh(const std::string& path);
-    
-    void create(const std::string& path);
-    void create(const std::vector<Vertex>& vertecies,
-                const std::vector<unsigned int>& indicies,
-                const Texture& texture);
+    Mesh(const Mesh& mesh);
     
     ~Mesh();
     
-private:
-    struct SubMesh
-    {
-        SubMesh();
-        SubMesh(const std::vector<Vertex>& vertecies,
-                const std::vector<unsigned int>& indicies);
-        
-        ~SubMesh();
-        
-        Texture m_texture;
-        VertexArrayObject m_vao;
-    };
+    bool createFromFile(const std::string& path);
     
-    void loadFromAiScene(const ai)
+    void dispose();
+    
+    void render();
+    
+private:
+    std::vector<MeshNode> m_meshNodes;
 };
 
 #endif // MESH_HPP
