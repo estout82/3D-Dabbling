@@ -1,5 +1,5 @@
 //
-//  WindowsTest.h
+//  WindowsTest.hpp
 //  3D-Dabbling
 //
 //  Created by Eric Stoutenburg on 6/26/15.

@@ -1,5 +1,5 @@
 //
-//  MacOSXTest.h
+//  MacOSXTest.hpp
 //  3D-Dabbling
 //
 //  Created by Eric Stoutenburg on 6/26/15.
@@ -30,6 +30,8 @@ private:
     
     Texture* m_texture;
     VertexArrayObject* m_vao;
+    
+    float angle;
     
     void update();
     void render();

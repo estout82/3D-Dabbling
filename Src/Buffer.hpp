@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 Eric Stoutenburg. All rights reserved.
 //
 
-#ifndef GRAPHICS_BUFFER_HPP
-#define GRAPHICS_BUFFER_HPP
+#ifndef BUFFER_HPP
+#define BUFFER_HPP
 
 #include <vector>
 #include <cassert>
@@ -51,8 +51,7 @@ public:
     
     void create(const std::vector<type>& data)
     {
-        if (m_handle)
-            dispose();
+        dispose();
         
         m_numElements = (unsigned int)data.size();
         
@@ -122,4 +121,4 @@ private:
 typedef Buffer<GL_ARRAY_BUFFER, Vertex> VertexBuffer;
 typedef Buffer<GL_ELEMENT_ARRAY_BUFFER, unsigned int> IndexBuffer;
 
-#endif // BUFFERS_HPP
+#endif // BUFFER_HPP

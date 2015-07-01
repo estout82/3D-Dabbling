@@ -1,3 +1,11 @@
+//
+//  Shader.cpp
+//  3D-Dabbling
+//
+//  Created by Eric Stoutenburg on 6/14/15.
+//  Copyright (c) 2015 Eric Stoutenburg. All rights reserved.
+//
+
 #include <fstream>
 #include <sstream>
 #include <iostream>

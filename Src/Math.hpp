@@ -1,5 +1,17 @@
+//
+//  MacOSXTest.cpp
+//  3D-Dabbling
+//
+//  Created by Eric Stoutenburg on 6/14/15.
+//  Copyright (c) 2015 Eric Stoutenburg. All rights reserved.
+//
+
 #ifndef VERTEX_HPP
 #define VERTEX_HPP
+
+#include <cassert>
+#include <iostream>
+#include <cmath>
 
 #define PI 3.141592
 
@@ -26,12 +38,6 @@ struct Vector2
 		return *this;
 	}
 
-	inline const Vector2<T>& normalized() const
-	{
-		T len = length();
-		return Vector2<T>(x / len, y / len);
-	}
-
 	inline T length() const
 	{
 		return sqrt((x * x) + (y * y));
@@ -43,10 +49,16 @@ struct Vector2
 		return *this;
 	};
 
-	inline float operator[](unsigned int index) const
+	inline T operator[](unsigned int index) const
 	{
+        assert(index > 2);
 		return (&x)[index];
 	}
+    
+    void printToConsole() const
+    {
+        std::cout << "X: " << x << " Y: " << y << std::endl;
+    }
 };
 
 template<typename T>
@@ -70,27 +82,26 @@ struct Vector3
 		return *this;
 	}
 
-	inline const Vector3<T>& normalized() const
-	{
-		T len = length();
-		return Vector3<T>(x / len, y / len, z / len);
-	}
-
 	inline T length() const
 	{
 		return sqrt((x * x) + (y * y) + (z * z));
 	}
-
 
 	inline const Vector3<T>& operator=(const Vector3<T>& v)
 	{
 		x = v.x; y = v.y; z = v.z; return *this;
 	};
 
-	inline float operator[](unsigned int index) const
+	inline T operator[](unsigned int index) const
 	{
+        assert(index > 3);
 		return (&x)[index];
 	}
+    
+    void printToConsole() const
+    {
+        std::cout << "X: " << x << " Y: " << y << " Z: " << z << std::endl;
+    }
 };
 
 template<typename T>
@@ -115,12 +126,6 @@ struct Vector4
 		return *this;
 	}
 
-	inline const Vector4<T>& normalized() const
-	{
-		T len = length();
-		return Vector4<T>(x / len, y / len, z / len, w / len);
-	}
-
 	inline T length() const
 	{
 		return sqrt((x * x) + (y * y) + (z * z) + (w * w));
@@ -132,31 +137,16 @@ struct Vector4
 		return *this;
 	};
 
-	inline float operator[](unsigned int index)
+	inline T operator[](unsigned int index)
 	{
-		if (index == 0)
-		{
-			return x;
-		}
-
-		if (index == 1)
-		{
-			return y;
-		}
-
-		if (index == 2)
-		{
-			return z;
-		}
-
-		if (index == 3)
-		{
-			return w;
-		}
-
-		else
-			return 0;
+        assert(index > 4);
+        return *(this+index);
 	}
+    
+    void printToConsole() const
+    {
+        std::cout << "X: " << x << " Y: " << y << " Z: " << z << " W: " << w << std::endl;
+    }
 };
 
 using Vector2b = Vector2<char>;
@@ -214,27 +204,59 @@ struct Matrix4
 
 	void initTranslation(const Vector3<T>& v)
 	{
-		row[3][0] = v.x;
-		row[3][1] = v.y;
-		row[3][2] = v.z;
+        row[0][3] = v.x;
+        row[1][3] = v.y;
+        row[2][3] = v.z;
 	}
 
-	void initRotation(T angle, const Vector3<T>& axis)
+	void initRotationZYX(T angle, Vector3<T> axis)
 	{
-		axis.normalize();
-		T xAngle = angle * axis.x;
-		T yAngle = angle * axis.y;
-		T zAngle = angle * axis.z;
-
-		row[0][0] = cos(yAngle) * cos(zAngle); row[0][1] = cos(zAngle) * sin(xAngle) * sin(yAngle) - cos(xAngle) * sin(zAngle); row[0][2] = cos(xAngle) * cos(zAngle) * sin(yAngle) + sin(xAngle) * sin(zAngle);  row[0][3] = 0;
-		row[1][0] = cos(yAngle) * sin(zAngle); row[1][1] = cos(xAngle) * cos(zAngle) + sin(xAngle) * sin(yAngle) * sin(zAngle); row[1][2] = -cos(zAngle) * sin(xAngle) + cos(xAngle) * sin(yAngle) * sin(zAngle); row[1][3] = 0;
-		row[2][0] = -sin(yAngle);              row[2][1] = cos(yAngle) * sin(xAngle);                                           row[2][2] = cos(xAngle) * cos(yAngle);                                            row[2][3] = 0;
-		row[3][0] = 0;                         row[3][1] = 0;                                                                   row[3][2] = 0;                                                                    row[3][3] = 1;
+        axis.normalize();
+        T x = TO_RADIANS(angle * axis.x);
+        T y = TO_RADIANS(angle * axis.y);
+        T z = TO_RADIANS(angle * axis.z);
+        
+        row[0][0] = cos(y) * cos(z);
+        row[0][1] = cos(z) * sin(x) * sin(y) - cos(x) * sin(z);
+        row[0][2] = cos(x) * cos(z) * sin(y) + sin(x) + sin(z);
+        
+        row[1][0] = cos(y) * sin(z);
+        row[1][1] = cos(x) * cos(z) + sin(x) * sin(y) * sin(z);
+        row[1][2] = -cos(z) * sin(x) + cos(x) * sin(y) * sin(z);
+        
+        row[2][0] = -sin(y);
+        row[2][1] = cos(y) * sin(x);
+        row[2][2] = cos(x) * cos(y);
 	}
+    
+    void initRotationXYZ(T angle, Vector3<T> axis)
+    {
+        axis.normalize();
+        T x = TO_RADIANS(angle * axis.x);
+        T y = TO_RADIANS(angle * axis.y);
+        T z = TO_RADIANS(angle * axis.z);
+        
+        row[0][0] = cos(y) * cos(z);
+        row[0][1] = -cos(y) * sin(z);
+        row[0][2] = sin(y);
+        
+        row[1][0] = cos(x) * sin(z) + sin(x) * sin(y) * cos(z);
+        row[1][1] = cos(x) * cos(z) - sin(x) * sin(y) * sin(z);
+        row[1][2] = -sin(x) * cos(y);
+        
+        row[2][0] = sin(x) * sin(z) - cos(z) * sin(y) * cos(z);
+        row[2][1] = sin(x) * cos(z) + cos(x) * sin(y) * sin(z);
+        row[2][2] = cos(x) * cos(y);
+    }
 
-	void initPerspective()
+	void initPerspective(T aspectRatio, T fov, T zNear, T zFar)
 	{
-
+        row[0][0] = 1 / tan(TO_RADIANS(fov) / 2);
+        row[1][1] = aspectRatio / tan(TO_RADIANS(fov) / 2);
+        row[2][2] = (zNear + zFar) / (zNear - zFar);
+        row[2][3] = (2 * zNear * zFar) / (zNear - zFar);
+        row[3][2] = -1;
+        row[3][3] = 0;
 	}
 
 	const Matrix4<T>& operator=(const  Matrix4<T>& m)
@@ -247,25 +269,27 @@ struct Matrix4
 		return *this;
 	}
 
-	const  Matrix4<T>& operator*(const  Matrix4<T>& m) const
+	Matrix4<T> operator*(const  Matrix4<T>& m) const
 	{
+        Matrix4<T> r;
+        
 		for (unsigned int i = 0; i < 4; i++)
 		{
 			for (unsigned int j = 0; j < 4; j++)
 			{
-				row[j][i] = row[j][0] * m.row[0][i] +
-							row[j][1] * m.row[1][i] +
-							row[j][2] * m.row[2][i] +
-							row[j][3] * m.row[3][i];
+				r.row[i][j] = row[i][0] * m.row[0][j] +
+                              row[i][1] * m.row[1][j] +
+                              row[i][2] * m.row[2][j] +
+                              row[i][3] * m.row[3][j];
 			}
 		}
 
-		return *this;
+		return r;
 	}
 
 	void printToConsole() const
 	{
-
+        
 	}
 };
 

@@ -20,6 +20,8 @@ MacOSXTest::MacOSXTest() :
 m_window(NULL)
 {
     std::cout << "Running on MacOSX." << std::endl;
+    
+    angle = 0.0f;
 }
 
 MacOSXTest::~MacOSXTest()
@@ -37,11 +39,12 @@ bool MacOSXTest::initalize()
     m_window = new sf::Window(sf::VideoMode(800, 600), "Title", sf::Style::Default, cs);
     
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glEnable(GL_DEPTH_TEST);
     
     std::vector<Vertex> vertecies;
-    vertecies.push_back(Vertex(Vector3f(0.0f, 1.0f, -1.0f), Vector2f(0.5f, 1.0f)));
-    vertecies.push_back(Vertex(Vector3f(-1.0f, -1.0f, -1.0f), Vector2f(0.0f, 0.0f)));
-    vertecies.push_back(Vertex(Vector3f(1.0f, -1.0f, -1.0f), Vector2f(1.0f, 0.0f)));
+    vertecies.push_back(Vertex(Vector3f(0.0f, 1.0f, -5.0f), Vector2f(0.5f, 1.0f)));
+    vertecies.push_back(Vertex(Vector3f(-1.0f, -1.0f, -5.0f), Vector2f(0.0f, 0.0f)));
+    vertecies.push_back(Vertex(Vector3f(1.0f, -1.0f, -5.0f), Vector2f(1.0f, 0.0f)));
     
     std::vector<unsigned int> indicies;
     indicies.push_back(0);
@@ -67,7 +70,6 @@ void MacOSXTest::run()
         {
             if (e.type == sf::Event::Closed)
             {
-                m_window->close();
                 return;
             }
         }
@@ -86,7 +88,21 @@ void MacOSXTest::update()
 
 void MacOSXTest::render()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
+    ShaderProgram sp = m_vao->getShaderProgram();
+    
+    unsigned int matrixLocation = sp.getUniformLocation("worldMatrix");
+    
+    angle += 1.0f;
+    
+    Matrix4f p;
+    p.initPerspective(800.0f / 600.0f, 90.0f, 0.1f, 100.0f);
+    
+    Matrix4f r;
+    r.initRotationXYZ(angle * 0.3f, Vector3f(0.0f, 0.0f, 1.0f));
+    
+    sp.setUniformMatrix4f(matrixLocation, (p * r));
     
     m_vao->bind();
     glDrawArrays(GL_TRIANGLES, 0, 3);

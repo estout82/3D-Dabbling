@@ -20,8 +20,6 @@ m_handle(NULL),
 m_refCount(new unsigned)
 {
     *m_refCount = 1;
-    
-    std::cout << m_refCount << " - " << *m_refCount << std::endl;
 }
 
 VertexArrayObject::VertexArrayObject(const VertexArrayObject& v) :
@@ -45,8 +43,7 @@ void VertexArrayObject::create(const std::vector<Vertex>& vertecies,
                                const Shader& fragmentShader,
                                const Shader& geometryShader)
 {
-    if (m_handle)
-        dispose();
+    dispose();
     
     glGenVertexArrays(1, &m_handle);
     glBindVertexArray(m_handle);

@@ -13,6 +13,8 @@
 #include "ShaderProgram.hpp"
 #include "Buffer.hpp"
 
+// TODO: add validation system to prevent acessing NULL buffers
+
 class VertexArrayObject
 {
 public:
@@ -26,6 +28,8 @@ public:
                 const Shader& vertexShader,
                 const Shader& fragmentShader,
                 const Shader& geometryShader = Shader());
+    
+    void reset();
     
     void bind() const;
     void unbind() const;

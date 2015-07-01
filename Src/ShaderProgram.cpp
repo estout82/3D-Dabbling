@@ -1,28 +1,64 @@
+//
+//  ShaderProgram.cpp
+//  3D-Dabbling
+//
+//  Created by Eric Stoutenburg on 6/14/15.
+//  Copyright (c) 2015 Eric Stoutenburg. All rights reserved.
+//
+
 #include <iostream>
-#include "OpenGL.hpp"
 #include "ShaderProgram.hpp"
+#include "OpenGL.hpp"
 
 ShaderProgram::ShaderProgram() :
-m_handle(NULL),
 m_vertex(),
 m_fragment(),
-m_geometry()
+m_geometry(),
+m_handle(NULL),
+m_refCount(new unsigned)
 {
+    *m_refCount = 1;
+}
 
+ShaderProgram::ShaderProgram(const std::string& vertexShaderPath,
+                             const std::string& fragmentShaderPath) :
+m_vertex(),
+m_fragment(),
+m_geometry(),
+m_handle(NULL),
+m_refCount(new unsigned)
+{
+    *m_refCount = 1;
+    
+    create(Shader(vertexShaderPath, GL_VERTEX_SHADER), Shader(fragmentShaderPath, GL_FRAGMENT_SHADER));
+}
+
+ShaderProgram::ShaderProgram(const Shader& vertexShader,
+                             const Shader& fragmentShader) :
+m_vertex(),
+m_fragment(),
+m_geometry(),
+m_handle(NULL),
+m_refCount(new unsigned)
+{
+    *m_refCount = 1;
+    
+    create(vertexShader, fragmentShader);
 }
 
 ShaderProgram::ShaderProgram(const ShaderProgram& sp) :
 m_handle(sp.m_handle),
 m_vertex(sp.m_vertex),
 m_fragment(sp.m_fragment),
-m_geometry(sp.m_geometry)
+m_geometry(sp.m_geometry),
+m_refCount(sp.m_refCount)
 {
-
+    retainRef();
 }
 
 ShaderProgram::~ShaderProgram()
 {
-	dispose();
+    releaseRef();
 }
 
 bool ShaderProgram::create(const std::string& vertexShaderPath,
@@ -35,6 +71,9 @@ bool ShaderProgram::create(const std::string& vertexShaderPath,
 bool ShaderProgram::create(const Shader& vertexShader,
 	const Shader& fragmentShader)
 {
+    if (m_handle)
+        dispose();
+    
 	m_vertex = vertexShader;
 	m_fragment = fragmentShader;
 
@@ -105,15 +144,6 @@ void ShaderProgram::use()
 
 	else
 		std::cout << "Error: unable to use program because handle is NULL." << std::endl;
-}
-
-void ShaderProgram::dispose()
-{
-	if (m_handle)
-	{
-		glDeleteProgram(m_handle);
-		m_handle = NULL;
-	}
 }
 
 void ShaderProgram::setUniformMatrix4f(int location,
@@ -188,17 +218,68 @@ void ShaderProgram::setUniformInt(int location,
 	glUniform1i(location, i);
 }
 
-unsigned int ShaderProgram::getUniformLocation(const std::string& name) const
+int ShaderProgram::getUniformLocation(const std::string& name) const
 {
 	int location = glGetUniformLocation(m_handle, name.c_str());
 
 	if (location == -1)
 	{
 		std::cout << "Error: unable to get the location of the uniform '" << name << "'." << std::endl;
-		return 0;
+		return -1;
 	}
 
 	return static_cast<unsigned int>(location);
+}
+
+const ShaderProgram& ShaderProgram::operator=(const ShaderProgram &sp)
+{
+    releaseRef();
+    
+    m_vertex = sp.m_vertex;
+    m_fragment = sp.m_fragment;
+    m_geometry = sp.m_geometry;
+    m_handle = sp.m_handle;
+    m_refCount = sp.m_refCount;
+    
+    retainRef();
+    
+    return *this;
+}
+
+void ShaderProgram::dispose()
+{
+    if (m_handle)
+    {
+        if (m_vertex.getHandle())
+            glDetachShader(m_handle, m_vertex.getHandle());
+        
+        if (m_fragment.getHandle())
+            glDetachShader(m_handle, m_fragment.getHandle());
+        
+        if (m_geometry.getHandle())
+            glDetachShader(m_handle, m_geometry.getHandle());
+        
+        glDeleteProgram(m_handle);
+    }
+}
+
+void ShaderProgram::retainRef()
+{
+    assert(m_refCount);
+    *m_refCount += 1;
+}
+
+void ShaderProgram::releaseRef()
+{
+    assert(m_refCount && *m_refCount > 0);
+    *m_refCount -= 1;
+    
+    if (*m_refCount == 0)
+    {
+        dispose();
+        delete m_refCount;
+        m_refCount = NULL;
+    }
 }
 
 std::string ShaderProgram::getInfoLog() const
